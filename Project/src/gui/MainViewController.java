@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import com.sun.swing.internal.plaf.synth.resources.synth;
-
 import application.Main;
 import gui.util.Alerts;
 import javafx.fxml.FXML;
@@ -32,7 +30,7 @@ public class MainViewController implements Initializable {
 	}
 
 	public void onMenuItemDepartamentAction() {
-		System.out.println("onMenuItemDepartamentAction");
+		loadView("/gui/DepartamentList.fxml");
 	}
 
 	public void onMenuItemAboutAction() {
