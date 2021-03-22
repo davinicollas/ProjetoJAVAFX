@@ -3,6 +3,7 @@ package gui;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 import application.Main;
 import gui.util.Alerts;
@@ -31,12 +32,15 @@ public class MainViewController implements Initializable {
 	}
 
 	public void onMenuItemDepartamentAction() {
-		loadView2("/gui/DepartamentList.fxml");
+		loadView("/gui/DepartamentList.fxml", (DepartamentListController controller ) -> {
+			controller.setDepartamentService(new DepartmanetServices());
+			controller.updateTableView();
+		});
 		
 	}
 
 	public void onMenuItemAboutAction() {
-		loadView("/gui/About.fxml");
+		loadView("/gui/About.fxml", x ->{});
 	}
 
 	@Override
@@ -44,7 +48,7 @@ public class MainViewController implements Initializable {
 
 	}
 
-	private synchronized void loadView(String absluteName) {
+	private synchronized <T> void loadView(String absluteName, Consumer<T> initializingAction) {
 		try {
 			/* Criando a função para busca a view */
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absluteName));
@@ -66,25 +70,12 @@ public class MainViewController implements Initializable {
 			 * Adicionando as informação das views carregadas sem perde o principal e o menu
 			 */
 			mainVBox.getChildren().addAll(newVBox.getChildren());
-
-		} catch (IOException e) {
-			Alerts.showAlert("IO Exception", "Error Loading view", e.getMessage(), AlertType.ERROR);
-		}
-	}
-	private synchronized void loadView2(String absluteName) {
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(absluteName));
-			VBox newVBox = loader.load();
-			Scene mainScene = Main.getMainScene();
-			VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
-			Node mainMenu = mainVBox.getChildren().get(0);
-			mainVBox.getChildren().clear();
-			mainVBox.getChildren().add(mainMenu);
-			mainVBox.getChildren().addAll(newVBox.getChildren());
 			
-			DepartamentListController controller = loader.getController();
-			controller.setDepartamentService(new DepartmanetServices());
-			controller.updateTableView();
+			/*Ativar a função que esta no parametro*/
+			
+			T controller= loader.getController();
+			/*Inicial o carregamento do conteudo passado na função*/
+			initializingAction.accept(controller);
 
 		} catch (IOException e) {
 			Alerts.showAlert("IO Exception", "Error Loading view", e.getMessage(), AlertType.ERROR);
