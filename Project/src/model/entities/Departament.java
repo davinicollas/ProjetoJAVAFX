@@ -1,7 +1,13 @@
 package model.entities;
 
-public class Departament {
+import java.io.Serializable;
+
+public class Departament implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String nome;
 	public Departament(Integer id, String nome) {
