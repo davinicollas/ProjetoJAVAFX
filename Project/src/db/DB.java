@@ -16,7 +16,7 @@ public class DB {
 				 String mydatabase = "javafx";
 				 String url ="jdbc:mysql://"+ serverName +"/"+ mydatabase;
 				 String user = "root";
-				 String password = " 12345";
+				 String password = "12345";
 				 con = DriverManager.getConnection(url , user, password);	
 			}catch(SQLException e) {
 			 throw new DbExcepiton("Erro de conexão: " + e.getMessage());

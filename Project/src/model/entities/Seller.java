@@ -1,22 +1,33 @@
 package model.entities;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Seller {
+public class Seller implements Serializable{
 	private Integer id;
 	private String nome;
 	private String email;
 	private Date birgthDate;
-	private Integer departId;
-
-	public Seller(Integer id, String nome, String email, Date birgthDate, Integer departId) {
+	private Departament departament;
+	private Double baseSalary;
+	public Seller() {}
+	public Seller(Integer id, String nome, String email, Date birgthDate, Departament departament , Double baseSalary) {
 		this.id = id;
 		this.nome = nome;
 		this.email = email;
 		this.birgthDate = birgthDate;
-		this.departId = departId;
+		this.departament = departament;
+		this.baseSalary = baseSalary;
 	}
 		
+	public Double getBaseSalary() {
+		return baseSalary;
+	}
+
+	public void setBaseSalary(Double baseSalary) {
+		this.baseSalary = baseSalary;
+	}
+
 	public Integer getId() {
 		return id;
 	}
@@ -41,13 +52,14 @@ public class Seller {
 	public void setBirgthDate(Date birgthDate) {
 		this.birgthDate = birgthDate;
 	}
-	public Integer getDepartId() {
-		return departId;
-	}
-	public void setDepartId(Integer departId) {
-		this.departId = departId;
-	}
 
+
+	public Departament getDepartament() {
+		return departament;
+	}
+	public void setDepartament(Departament departament) {
+		this.departament = departament;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -76,9 +88,9 @@ public class Seller {
 	@Override
 	public String toString() {
 		return "Seller [id=" + id + ", nome=" + nome + ", email=" + email + ", birgthDate=" + birgthDate + ", departId="
-				+ departId + "]";
+				+ departament + ", baseSalary=" + baseSalary + "]";
 	}
-	
+
 	
 	
 	
