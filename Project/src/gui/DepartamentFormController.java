@@ -1,9 +1,12 @@
 package gui;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import db.DbExcepiton;
+import gui.listener.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Constraints;
 import gui.util.Utils;
@@ -34,6 +37,9 @@ public class DepartamentFormController implements Initializable{
 	private Button BtCancel;
 	
 	
+	private List<DataChangeListener> dataChangeListerners = new ArrayList<>();
+	
+	
 	public void setEntity(Departament entity) {
 		this.entity = entity;
 	}
@@ -51,12 +57,18 @@ public class DepartamentFormController implements Initializable{
 		try{
 		entity = getFormData();
 		service.saveOrUpdate(entity);
+		notifyDataChangeListerns();
 		Utils.currentStage(event).close();
 		
 		}catch(DbExcepiton e) {
 			Alerts.showAlert("Erro saving object", null, e.getMessage(), AlertType.ERROR);
 		}
 		
+	}
+	private void notifyDataChangeListerns() {
+		for(DataChangeListener listener : dataChangeListerners) {
+			listener.OnDataChange();
+		}
 	}
 	private Departament getFormData() {
 		Departament obj = new Departament();
@@ -88,4 +100,8 @@ public class DepartamentFormController implements Initializable{
 		txtID.setText(String.valueOf(entity.getId()));
 		txtNome.setText(entity.getNome());
 	}
+	public void subscribeDataChangeListener(DataChangeListener listener) {
+		dataChangeListerners.add(listener);
+	}
+
 }
