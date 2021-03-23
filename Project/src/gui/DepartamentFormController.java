@@ -3,7 +3,9 @@ package gui;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import db.DbExcepiton;
 import gui.listener.DataChangeListener;
@@ -18,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.entities.Departament;
+import model.exception.ValidationException;
 import model.services.DepartmanetServices;
 
 public class DepartamentFormController implements Initializable{
@@ -60,7 +63,10 @@ public class DepartamentFormController implements Initializable{
 		notifyDataChangeListerns();
 		Utils.currentStage(event).close();
 		
-		}catch(DbExcepiton e) {
+		}catch(ValidationException e) {
+			setErrorMensage(e.getErrors());
+		}
+		catch(DbExcepiton e) {
 			Alerts.showAlert("Erro saving object", null, e.getMessage(), AlertType.ERROR);
 		}
 		
@@ -72,11 +78,15 @@ public class DepartamentFormController implements Initializable{
 	}
 	private Departament getFormData() {
 		Departament obj = new Departament();
-		
+		ValidationException exepition = new ValidationException("Validation campo");
 		obj.setId(Utils.tryParseToInt(txtID.getText()));
+		if(txtNome.getText() == null || txtNome.getText().trim().equals(" ")){
+			exepition.adError("name", "field is empyt");
+		}
 		obj.setNome(txtNome.getText());
-		
-		
+		if(exepition.getErrors().size()>0) {
+			throw exepition;
+		}
 		return obj;
 	}
 	public void onBtCancelAction(ActionEvent event) {
@@ -102,6 +112,14 @@ public class DepartamentFormController implements Initializable{
 	}
 	public void subscribeDataChangeListener(DataChangeListener listener) {
 		dataChangeListerners.add(listener);
+	}
+	private void setErrorMensage(Map<String, String> errors) {
+		
+		Set<String> fields = errors.keySet();
+		
+		if(fields.contains("name")) {
+			labelErroName.setText(errors.get("name"));
+		}
 	}
 
 }
