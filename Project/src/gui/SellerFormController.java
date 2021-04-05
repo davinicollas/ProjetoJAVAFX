@@ -1,9 +1,11 @@
 package gui;
 
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -61,16 +63,14 @@ public class SellerFormController implements Initializable {
 	@FXML
 	private Label labelErroBirthDate;
 	@FXML
-	private Label labelBaseSalary;
+	private Label labelErroBaseSalary;
 	@FXML
 	private Button BtSave;
 	@FXML
 	private Button BtCancel;
 	@FXML
-
 	private List<DataChangeListener> dataChangeListerners = new ArrayList<>();
 	@FXML
-
 	private ObservableList<Departament> obsList;
 
 	public void setEntity(Seller entity) {
@@ -115,9 +115,29 @@ public class SellerFormController implements Initializable {
 		ValidationException exepition = new ValidationException("Validation campo");
 		obj.setId(Utils.tryParseToInt(txtID.getText()));
 		if (txtNome.getText() == null || txtNome.getText().trim().equals(" ")) {
-			exepition.adError("name", "field is empyt");
+			exepition.adError("nome", "field is empyt");
 		}
 		obj.setNome(txtNome.getText());
+
+		if (txtEmail.getText() == null || txtEmail.getText().trim().equals(" ")) {
+			exepition.adError("email", "field is empyt");
+		}
+		obj.setEmail(txtEmail.getText());
+
+		if(dpBirthDate.getValue() == null) {
+			exepition.adError("BirthDate", "field is empyt");
+
+		}else{
+		Instant instant = Instant.from(dpBirthDate.getValue().atStartOfDay(ZoneId.systemDefault()));
+		obj.setBirthDate(Date.from(instant));
+		
+		}		
+		if (txtBaseSalary.getText() == null || txtBaseSalary.getText().trim().equals(" ")) {
+			exepition.adError("baseSalary", "field is empyt");
+		}
+		obj.setBaseSalary(Utils.tryParseToDouble(txtBaseSalary.getText()));
+
+		obj.setDepartament(ComboBoxDepartament.getValue());
 		if (exepition.getErrors().size() > 0) {
 			throw exepition;
 		}
@@ -169,10 +189,11 @@ public class SellerFormController implements Initializable {
 	private void setErrorMensage(Map<String, String> errors) {
 
 		Set<String> fields = errors.keySet();
-
-		if (fields.contains("name")) {
-			labelErroName.setText(errors.get("name"));
-		}
+		labelErroName.setText((fields.contains("nome") ? errors.get("nome") : ""));
+	    labelErroEmail.setText((fields.contains("email") ? errors.get("email") : "" ));
+		labelErroBirthDate.setText((fields.contains("BirthDate") ? errors.get("BirthDate") : ""));
+		labelErroBaseSalary.setText((fields.contains("baseSalary") ? errors.get("baseSalary") : ""));
+			
 	}
 
 	public void loadAssociateObjects() {
